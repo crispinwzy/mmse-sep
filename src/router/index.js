@@ -101,6 +101,9 @@ export const asyncRoutes = [
   {
     path: '/event-requests',
     component: Layout,
+    meta: {
+      roles: ['customer_service', 'senior_customer_service', 'financial_manager', 'admin_manager']
+    },
     children: [
       {
         path: '',
@@ -109,7 +112,6 @@ export const asyncRoutes = [
         meta: {
           title: 'Event Requests',
           icon: 'table',
-          roles: ['customer_service', 'senior_customer_service', 'financial_manager', 'admin_manager'],
           noCache: true
         }
       }

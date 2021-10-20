@@ -26,7 +26,7 @@ for (let i = 0; i < count; i++) {
       drinks: '@boolean'
     },
     expectedBudget: '@integer(10000, 200000)',
-    'status|1': ['pending', 'approved', 'rejected']
+    'status|1': ['pending', 'approved_by_SCS', 'approved_by_FM', 'approved', 'rejected']
   }))
 }
 

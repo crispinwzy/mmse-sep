@@ -92,7 +92,7 @@
           <span>{{ row.endDate | parseTime('{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Status" class-name="status-col" width="110">
+      <el-table-column label="Status" class-name="status-col" width="150">
         <template slot-scope="{row}">
           <el-tag :type="row.status | statusFilter">
             {{ row.status }}
@@ -101,15 +101,35 @@
       </el-table-column>
       <el-table-column label="Actions" align="center" width="310" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
+          <!-- Edit -->
           <el-button v-permission="['customer_service', 'senior_customer_service', 'admin_manager']" size="mini" @click="handleUpdate(row)">
             Edit
           </el-button>
-          <el-button v-permission="['senior_customer_service', 'financial_manager', 'admin_manager']" :disabled="row.status!='pending'" size="mini" type="success" @click="handleModifyStatus(row, 'approve')">
+          <!-- For SCS -->
+          <el-button v-if="role==='senior_customer_service'" :disabled="row.status!=='pending'" size="mini" type="success" @click="handleModifyStatus(row, 'approve')">
             Approve
           </el-button>
-          <el-button v-permission="['senior_customer_service', 'financial_manager', 'admin_manager']" :disabled="row.status!='pending'" size="mini" type="info" @click="handleModifyStatus(row, 'reject')">
+          <el-button v-if="role==='senior_customer_service'" :disabled="row.status!='pending'" size="mini" type="info" @click="handleModifyStatus(row, 'reject')">
             Reject
           </el-button>
+
+          <!-- For FM -->
+          <el-button v-if="role==='financial_manager'" :disabled="row.status!=='approved_by_SCS'" size="mini" type="success" @click="handleModifyStatus(row, 'approve')">
+            Approve
+          </el-button>
+          <el-button v-if="role==='financial_manager'" :disabled="row.status!=='approved_by_SCS'" size="mini" type="info" @click="handleModifyStatus(row, 'reject')">
+            Reject
+          </el-button>
+
+          <!-- For AM -->
+          <el-button v-if="role==='admin_manager'" :disabled="row.status!=='approved_by_FM'" size="mini" type="success" @click="handleModifyStatus(row, 'approve')">
+            Approve
+          </el-button>
+          <el-button v-if="role==='admin_manager'" :disabled="row.status!=='approved_by_FM' && row.status!=='approved'" size="mini" type="info" @click="handleModifyStatus(row, 'reject')">
+            Reject
+          </el-button>
+
+          <!-- Delete -->
           <el-button v-permission="['senior_customer_service', 'admin_manager']" :disabled="row.status!='pending'" size="mini" type="danger" @click="handleDelete(row,$index)">
             Delete
           </el-button>
@@ -172,6 +192,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import permission from '@/directive/permission/index.js'
 import { fetchList, createEventRequest, updateEventRequest } from '@/api/event-requests'
 import waves from '@/directive/waves' // waves directive
@@ -185,8 +206,10 @@ export default {
     statusFilter(status) {
       const statusMap = {
         pending: 'warning',
-        rejected: 'info',
-        approved: 'success'
+        approved_by_SCS: 'primary',
+        approved_by_FM: 'primary',
+        approved: 'success',
+        rejected: 'info'
       }
       return statusMap[status]
     }
@@ -242,6 +265,11 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapState({
+      role: state => state.user.roles[0]
+    })
+  },
   created() {
     this.getList()
   },
@@ -263,11 +291,6 @@ export default {
       this.getList()
     },
     handleModifyStatus(row, action) {
-      const action_status_map = {
-        'approve': 'approved',
-        'reject': 'rejected'
-      }
-
       this.$confirm(`Are you sure you want to ${action} this event request?`, 'Confirm Deletion', {
         dangerouslyUseHTMLString: true,
         confirmButtonText: 'Confirm',
@@ -275,11 +298,25 @@ export default {
         type: 'warning'
       })
         .then(() => {
+          switch (action) {
+            case 'approve':
+              if (this.role === 'senior_customer_service') {
+                row.status = 'approved_by_SCS'
+              } else if (this.role === 'financial_manager') {
+                row.status = 'approved_by_FM'
+              } else if (this.role === 'admin_manager') {
+                row.status = 'approved'
+              }
+              break
+            case 'reject':
+              row.status = 'rejected'
+              break
+          }
+
           this.$message({
             message: 'Success',
             type: 'success'
           })
-          row.status = action_status_map[action]
         })
     },
     sortChange(data) {
