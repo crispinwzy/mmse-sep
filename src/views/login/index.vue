@@ -47,29 +47,39 @@
 
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
 
-      <div style="position:relative">
-        <div class="tips">
-          <span>Username : customer_service</span>
+      <el-popover
+        placement="bottom-start"
+        width="480"
+        trigger="click"
+      >
+        <h4>This is Group 23's Project Assignment of the course ID2207 MMSE.</h4>
+        <el-divider />
+        <p>Use following usernames + any password to login, <br><b>different roles have different Access Permissions.</b></p>
+        <div style="position:relative">
+          <div class="tips">
+            <span>Username : customer_service</span>
+          </div>
+          <div class="tips">
+            <span>Username : senior_customer_service</span>
+          </div>
+          <div class="tips">
+            <span>Username : financial_manager</span>
+          </div>
+          <div class="tips">
+            <span>Username : service_manager</span>
+          </div>
+          <div class="tips">
+            <span>Username : production_manager</span>
+          </div>
+          <div class="tips">
+            <span>Username : hr</span>
+          </div>
+          <div class="tips">
+            <span>Username : admin_manager</span>
+          </div>
         </div>
-        <div class="tips">
-          <span>Username : senior_customer_service</span>
-        </div>
-        <div class="tips">
-          <span>Username : financial_manager</span>
-        </div>
-        <div class="tips">
-          <span>Username : service_manager</span>
-        </div>
-        <div class="tips">
-          <span>Username : production_manager</span>
-        </div>
-        <div class="tips">
-          <span>Username : hr</span>
-        </div>
-        <div class="tips">
-          <span>Username : admin_manager</span>
-        </div>
-      </div>
+        <el-button slot="reference" type="text">Instruction</el-button>
+      </el-popover>
     </el-form>
   </div>
 </template>
