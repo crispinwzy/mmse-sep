@@ -25,7 +25,7 @@ module.exports = [
       const { q, page = 1, limit = 20, sort } = config.query
 
       let mockList = List.filter(item => {
-        if (q && item.subject !== q) return false
+        if (q && !item.subject.includes(q)) return false
         return true
       })
 
