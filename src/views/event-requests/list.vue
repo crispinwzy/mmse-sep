@@ -22,42 +22,9 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column type="expand">
-        <template slot-scope="props">
-          <el-form label-position="left" inline class="table-expand">
-            <el-col :span="12">
-              <el-form-item label="Expected Attendee Number">
-                <span>{{ props.row.expectedAttendeeNumber }}</span>
-              </el-form-item>
-              <el-form-item label="Expected Budget">
-                <span>{{ props.row.expectedBudget }}</span>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <h3>Preferences</h3>
-              <el-form-item label="Decorations">
-                <i v-if="props.row.preferences.decorations" class="el-icon-success" />
-              </el-form-item>
-              <el-form-item label="Parties">
-                <i v-if="props.row.preferences.parties" class="el-icon-success" />
-              </el-form-item>
-              <el-form-item label="Photos/filming">
-                <i v-if="props.row.preferences.photos_filming" class="el-icon-success" />
-              </el-form-item>
-              <el-form-item label="Breakfast, lunch, dinner">
-                <i v-if="props.row.preferences.meal" class="el-icon-success" />
-              </el-form-item>
-              <el-form-item label="Soft/hot drinks">
-                <i v-if="props.row.preferences.drinks" class="el-icon-success" />
-              </el-form-item>
-            </el-col>
-          </el-form>
-        </template>
-      </el-table-column>
-
       <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
-          <span>{{ row.id }}</span>
+          <el-link type="primary" @click="showDetails(row)">{{ row.id }}</el-link>
         </template>
       </el-table-column>
       <el-table-column label="Client Info" align="center">
@@ -141,13 +108,13 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="800px">
       <el-form ref="requestForm" :rules="rules" :model="temp" label-position="left" label-width="250px" style="padding:0 20px;">
-        <el-form-item label="Client Name" prop="name">
+        <el-form-item label="Client Name" prop="client.name">
           <el-input v-model="temp.client.name" />
         </el-form-item>
-        <el-form-item label="Client Phone Number" prop="phoneNumber">
+        <el-form-item label="Client Phone Number" prop="client.phoneNumber">
           <el-input v-model="temp.client.phoneNumber" />
         </el-form-item>
-        <el-form-item label="Client Email" prop="email">
+        <el-form-item label="Client Email" prop="client.email">
           <el-input v-model="temp.client.email" />
         </el-form-item>
         <el-form-item label="Event Type" prop="eventType">
@@ -188,6 +155,61 @@
         </el-button>
       </div>
     </el-dialog>
+
+    <!-- Detail -->
+    <el-dialog v-if="selectedEvent" :title="`Event Request #${selectedEvent.id}`" :visible.sync="eventDetailsDialogVisible" width="400px">
+      <el-descriptions :column="1" size="" border label-class-name="desc-label">
+        <el-descriptions-item :span="1">
+          <template slot="label">
+            Expected Attendee Number
+          </template>
+          {{ selectedEvent.expectedAttendeeNumber }}
+        </el-descriptions-item>
+
+        <el-descriptions-item :span="1">
+          <template slot="label">
+            Expected Budget
+          </template>
+          {{ selectedEvent.expectedBudget }}
+        </el-descriptions-item>
+
+        <!-- Preferences -->
+        <el-descriptions-item :span="1">
+          <template slot="label">
+            Decorations
+          </template>
+          <i v-if="selectedEvent.preferences.decorations" class="el-icon-success" />
+        </el-descriptions-item>
+
+        <el-descriptions-item :span="1">
+          <template slot="label">
+            Parties
+          </template>
+          <i v-if="selectedEvent.preferences.parties" class="el-icon-success" />
+        </el-descriptions-item>
+
+        <el-descriptions-item :span="1">
+          <template slot="label">
+            Photos/filming
+          </template>
+          <i v-if="selectedEvent.preferences.photos_filming" class="el-icon-success" />
+        </el-descriptions-item>
+
+        <el-descriptions-item :span="1">
+          <template slot="label">
+            Breakfast, lunch, dinner
+          </template>
+          <i v-if="selectedEvent.preferences.meal" class="el-icon-success" />
+        </el-descriptions-item>
+
+        <el-descriptions-item :span="1">
+          <template slot="label">
+            Soft/hot drinks
+          </template>
+          <i v-if="selectedEvent.preferences.drinks" class="el-icon-success" />
+        </el-descriptions-item>
+      </el-descriptions>
+    </el-dialog>
   </div>
 </template>
 
@@ -223,11 +245,9 @@ export default {
         page: 1,
         limit: 10,
         client: undefined,
-        sort: '+id'
+        sort: '-id'
       },
-      importanceOptions: [1, 2, 3],
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
-      statusOptions: ['published', 'draft', 'deleted'],
       temp: {
         id: undefined,
         client: {
@@ -240,28 +260,32 @@ export default {
         eventType: '',
         expectedAttendeeNumber: '',
         preferences: {
-          decaorations: undefined,
-          parties: undefined,
-          photos_filming: undefined,
-          meal: undefined,
-          drinks: undefined
+          decaorations: false,
+          parties: false,
+          photos_filming: false,
+          meal: false,
+          drinks: false
         },
         expectedBudget: undefined,
         status: undefined
       },
       dialogFormVisible: false,
       dialogStatus: '',
+      eventDetailsDialogVisible: false,
+      selectedEvent: null,
       textMap: {
         update: 'Edit',
         create: 'Request for Event Planning'
       },
       rules: {
-        // type: [{ required: true, message: 'type is required', trigger: 'change' }],
-        // name: [{ required: true, message: 'client name is required', trigger: 'blur' }],
-        // email: [{ type: 'email', required: true, message: 'email is required', trigger: 'blur' }],
-        // phoneNumber: [{ type: 'number', required: true, message: 'client name is required', trigger: 'blur' }],
-        // startDate: [{ type: 'date', required: true, message: 'start date is required', trigger: 'change' }],
-        // endDate: [{ type: 'date', required: true, message: 'end date is required', trigger: 'change' }]
+        'client.name': [{ required: true, message: 'client name is required', trigger: 'blur' }],
+        'client.phoneNumber': [{ required: true, message: 'phone number is required', trigger: 'blur' }],
+        'client.email': [{ required: true, message: 'email is required', trigger: 'blur' }],
+        eventType: [{ required: true, message: 'event type is required', trigger: 'blur' }],
+        startDate: [{ type: 'date', required: true, message: 'start date is required', trigger: 'change' }],
+        endDate: [{ type: 'date', required: true, message: 'end date is required', trigger: 'change' }],
+        expectedAttendeeNumber: [{ required: true, message: 'expected number of attendees is required', trigger: 'blur' }],
+        expectedBudget: [{ required: true, message: 'expected budget is required', trigger: 'blur' }]
       }
     }
   },
@@ -346,15 +370,19 @@ export default {
         eventType: '',
         expectedAttendeeNumber: '',
         preferences: {
-          decaorations: undefined,
-          parties: undefined,
-          photos_filming: undefined,
-          meal: undefined,
-          drinks: undefined
+          decaorations: false,
+          parties: false,
+          photos_filming: false,
+          meal: false,
+          drinks: false
         },
         expectedBudget: undefined,
         status: undefined
       }
+    },
+    showDetails(row) {
+      this.selectedEvent = row
+      this.eventDetailsDialogVisible = true
     },
     handleCreate() {
       this.resetTemp()
@@ -370,7 +398,7 @@ export default {
           this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
           this.temp.status = 'pending'
           createEventRequest(this.temp).then(() => {
-            this.list.unshift(this.temp)
+            this.list.unshift(JSON.parse(JSON.stringify(this.temp)))
             this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
@@ -419,7 +447,7 @@ export default {
         .then(() => {
           this.$notify({
             title: 'Success',
-            message: 'Delete Successfully',
+            message: 'Deleted Successfully',
             type: 'success',
             duration: 2000
           })
@@ -434,17 +462,8 @@ export default {
 }
 </script>
 
-<style scoped>
-.table-expand {
-  font-size: 0;
-}
-.table-expand label {
-  width: 240px;
-  color: #99a9bf;
-}
-.table-expand .el-form-item {
-  margin-right: 0;
-  margin-bottom: 0;
-  width: 100%;
+<style>
+.desc-label {
+  width: 220px;
 }
 </style>
