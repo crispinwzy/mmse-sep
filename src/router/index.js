@@ -117,6 +117,25 @@ export const asyncRoutes = [
       }
     ]
   },
+  {
+    path: '/tasks',
+    component: Layout,
+    meta: {
+      roles: ['production_manager', 'service_manager']
+    },
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/tasks/list'),
+        name: 'Tasks',
+        meta: {
+          title: 'Tasks',
+          icon: 'list',
+          noCache: true
+        }
+      }
+    ]
+  },
 
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
