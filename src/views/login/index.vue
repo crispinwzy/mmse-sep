@@ -66,16 +66,19 @@
             <span>Username : financial_manager</span>
           </div>
           <div class="tips">
+            <span>Username : admin_manager</span>
+          </div>
+          <div class="tips">
+            <span>Username : hr</span>
+          </div>
+          <div class="tips">
             <span>Username : service_manager</span>
           </div>
           <div class="tips">
             <span>Username : production_manager</span>
           </div>
           <div class="tips">
-            <span>Username : hr</span>
-          </div>
-          <div class="tips">
-            <span>Username : admin_manager</span>
+            <span>Username : sub_team</span>
           </div>
         </div>
         <el-button slot="reference" type="text">Instruction</el-button>
