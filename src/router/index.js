@@ -121,7 +121,7 @@ export const asyncRoutes = [
     path: '/tasks',
     component: Layout,
     meta: {
-      roles: ['production_manager', 'service_manager']
+      roles: ['production_manager', 'service_manager', 'sub_team']
     },
     children: [
       {
@@ -129,8 +129,20 @@ export const asyncRoutes = [
         component: () => import('@/views/tasks/list'),
         name: 'Tasks',
         meta: {
-          title: 'Tasks',
+          title: 'Tasks Management',
           icon: 'list',
+          roles: ['production_manager', 'service_manager'],
+          noCache: true
+        }
+      },
+      {
+        path: '',
+        component: () => import('@/views/tasks/list'),
+        name: 'Tasks',
+        meta: {
+          title: 'My Tasks',
+          icon: 'list',
+          roles: ['sub_team'],
           noCache: true
         }
       }

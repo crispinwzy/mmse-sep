@@ -20,6 +20,9 @@ const tokens = {
   },
   admin_manager: {
     token: 'admin-manager-token'
+  },
+  sub_team: {
+    token: 'sub_team'
   }
 }
 
@@ -28,43 +31,49 @@ const users = {
     roles: ['customer_service'],
     introduction: 'I am a customer service',
     avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-    name: 'Customer Service'
+    name: 'Customer Service XXX'
   },
   'senior-customer-service-token': {
     roles: ['senior_customer_service'],
     introduction: 'I am a senior customer service',
     avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-    name: 'Senior Customer Service'
+    name: 'Senior Customer Service XXX'
   },
   'financial-manager-token': {
     roles: ['financial_manager'],
     introduction: 'I am a financial manager',
     avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-    name: 'Financial Manager'
+    name: 'Financial Manager XXX'
   },
   'service-manager-token': {
     roles: ['service_manager'],
     introduction: 'I am a service manager',
     avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-    name: 'Service Manager'
+    name: 'Service Manager XXX'
   },
   'production-manager-token': {
     roles: ['production_manager'],
     introduction: 'I am a production manager',
     avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-    name: 'Production Manager'
+    name: 'Production Manager XXX'
   },
   'hr-token': {
     roles: ['hr'],
     introduction: 'I am a HR',
     avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-    name: 'HR'
+    name: 'HR XXX'
   },
   'admin-manager-token': {
     roles: ['admin_manager'],
     introduction: 'I am a admin manager',
     avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-    name: 'Admin Manager'
+    name: 'Admin Manager XXX'
+  },
+  'sub_team': {
+    roles: ['sub_team'],
+    introduction: 'I am a sub team',
+    avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+    name: 'Sub Team XXX'
   }
 }
 
