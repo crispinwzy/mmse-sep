@@ -39,9 +39,14 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="Assign To" align="center">
+      <el-table-column v-if="['production_manager', 'service_manager'].includes(role)" label="Assign To" align="center" width="140">
         <template slot-scope="{row}">
           <span>{{ row.assignTo }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column v-if="role === 'sub_team'" label="Sender" align="center" width="140">
+        <template slot-scope="{row}">
+          <span>{{ row.sender }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Status" class-name="status-col" width="150">
@@ -53,6 +58,7 @@
       </el-table-column>
       <el-table-column label="Actions" align="center" width="310" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
+          <!-- For manager -->
           <!-- Edit -->
           <el-button v-permission="['production_manager', 'service_manager']" size="mini" @click="handleUpdate(row)">
             Edit
@@ -61,6 +67,18 @@
           <el-button v-permission="['production_manager', 'service_manager']" size="mini" type="danger" @click="handleDelete(row,$index)">
             Delete
           </el-button>
+
+          <!-- For team member -->
+          <el-dropdown v-permission="['sub_team']" trigger="click">
+            <el-button size="mini">
+              Change Status<i class="el-icon-arrow-down el-icon--right" />
+            </el-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item @click.native="handleChangeStatus(row, 'pending')">Pending</el-dropdown-item>
+              <el-dropdown-item @click.native="handleChangeStatus(row, 'in_progress')">In Progress</el-dropdown-item>
+              <el-dropdown-item @click.native="handleChangeStatus(row, 'done')">Done</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </template>
       </el-table-column>
     </el-table>
@@ -159,7 +177,25 @@
           <template slot="label">
             Comment from Assignee
           </template>
-          {{ selectedTask.commentFromAssignee }}
+          <span v-if="!editing">
+            {{ selectedTask.commentFromAssignee }}
+          </span>
+          <el-input
+            v-if="role === 'sub_team' && editing"
+            v-model="editingComment"
+            type="textarea"
+            :rows="2"
+            placeholder="Add your comment here"
+          />
+          <el-button v-if="role === 'sub_team' && !editing" size="mini" @click="handleComment()">
+            Edit Comment
+          </el-button>
+          <el-button v-if="role === 'sub_team' && editing" size="mini" @click="editing = ''; editing = false">
+            Cancel
+          </el-button>
+          <el-button v-if="role === 'sub_team' && editing" size="mini" @click="handleSubmitComment()">
+            Confirm
+          </el-button>
         </el-descriptions-item>
       </el-descriptions>
     </el-dialog>
@@ -231,7 +267,10 @@ export default {
         subject: [{ required: true, message: 'subject is required', trigger: 'blur' }],
         assignTo: [{ required: true, message: 'please select assignee', trigger: 'change' }],
         priority: [{ required: true, message: 'please select priority', trigger: 'change' }]
-      }
+      },
+      // Sub team
+      editing: false,
+      editingComment: ''
     }
   },
   computed: {
@@ -363,6 +402,31 @@ export default {
     getSortClass: function(key) {
       const sort = this.listQuery.sort
       return sort === `+${key}` ? 'ascending' : 'descending'
+    },
+    // For sub team
+    handleComment() {
+      this.editingComment = this.selectedTask.commentFromAssignee
+      this.editing = true
+    },
+    handleSubmitComment() {
+      this.selectedTask.commentFromAssignee = this.editingComment
+      this.editingComment = ''
+      this.editing = false
+      this.$notify({
+        title: 'Success',
+        message: 'Comment Updated',
+        type: 'success',
+        duration: 2000
+      })
+    },
+    handleChangeStatus(row, status) {
+      row.status = status
+      this.$notify({
+        title: 'Success',
+        message: 'Task Status Updated',
+        type: 'success',
+        duration: 2000
+      })
     }
   }
 }
