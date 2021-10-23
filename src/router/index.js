@@ -148,6 +148,25 @@ export const asyncRoutes = [
       }
     ]
   },
+  {
+    path: '/recruitment-requests',
+    component: Layout,
+    meta: {
+      roles: ['production_manager', 'service_manager', 'hr']
+    },
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/recruitment-requests/list'),
+        name: 'Recruitment Requests',
+        meta: {
+          title: 'Recruitment Requests',
+          icon: 'peoples',
+          noCache: true
+        }
+      }
+    ]
+  },
 
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
