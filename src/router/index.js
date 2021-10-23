@@ -167,6 +167,25 @@ export const asyncRoutes = [
       }
     ]
   },
+  {
+    path: '/financial-requests',
+    component: Layout,
+    meta: {
+      roles: ['production_manager', 'service_manager', 'financial_manager']
+    },
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/financial-requests/list'),
+        name: 'Financial Requests',
+        meta: {
+          title: 'Financial Requests',
+          icon: 'star',
+          noCache: true
+        }
+      }
+    ]
+  },
 
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
