@@ -315,7 +315,7 @@ export default {
       this.getList()
     },
     handleModifyStatus(row, action) {
-      this.$confirm(`Are you sure you want to ${action} this event request?`, 'Confirm Deletion', {
+      this.$confirm(`Are you sure you want to ${action} this event request?`, 'Confirm Action', {
         dangerouslyUseHTMLString: true,
         confirmButtonText: 'Confirm',
         cancelButtonText: 'Cancel',
